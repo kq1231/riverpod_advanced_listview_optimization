@@ -55,3 +55,12 @@ class TasksNotifier extends AsyncNotifier<List<Task>> {
     state = await AsyncValue.guard(() => fetchTasks());
   }
 }
+
+// Family provider for individual task by index
+// This creates a separate provider for each index
+final taskByIndexProvider = Provider.family<Task?, int>((ref, index) {
+  final asyncTasks = ref.watch(tasksProvider);
+  return asyncTasks.whenOrNull(
+    data: (tasks) => index < tasks.length ? tasks[index] : null,
+  );
+});
