@@ -3,27 +3,27 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/task_providers.dart';
 
 class TodoItem extends ConsumerWidget {
-  const TodoItem({super.key});
+  final int index;
+
+  const TodoItem({
+    super.key,
+    required this.index,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // Get the index from the overridden provider
-    final index = ref.watch(taskIndexProvider);
-
     // Watch only THIS specific task from the main tasks list using select
     // This ensures this widget only rebuilds when THIS task changes
-    final task = ref.watch(
+    final currentTask = ref.watch(
       tasksProvider.select((asyncValue) {
         return asyncValue.value?[index];
       }),
     );
 
-    // If task is null (loading or error), return empty container
-    if (task == null) {
-      return const SizedBox.shrink();
-    }
+    // Use the watched task
+    final taskToDisplay = currentTask!;
 
-    // Print to demonstrate that only this item rebuilds
+    // Print to demonstrate when this item rebuilds
     debugPrint('Building TodoItem for index: $index');
 
     return Card(
@@ -31,33 +31,33 @@ class TodoItem extends ConsumerWidget {
       elevation: 2,
       child: ListTile(
         leading: CircleAvatar(
-          backgroundColor: task.completed ? Colors.green : Colors.orange,
+          backgroundColor: taskToDisplay.completed ? Colors.green : Colors.orange,
           child: Text(
             '${index + 1}',
             style: const TextStyle(color: Colors.white),
           ),
         ),
         title: Text(
-          task.title,
+          taskToDisplay.title,
           style: TextStyle(
-            decoration: task.completed ? TextDecoration.lineThrough : null,
+            decoration: taskToDisplay.completed ? TextDecoration.lineThrough : null,
             fontWeight: FontWeight.w500,
           ),
         ),
         subtitle: Text(
-          task.completed ? 'Completed' : 'Pending',
+          taskToDisplay.completed ? 'Completed' : 'Pending',
           style: TextStyle(
-            color: task.completed ? Colors.green : Colors.orange,
+            color: taskToDisplay.completed ? Colors.green : Colors.orange,
             fontSize: 12,
           ),
         ),
         trailing: Checkbox(
-          value: task.completed,
+          value: taskToDisplay.completed,
           onChanged: (value) {
             // Toggle the task completion status in the main list
             ref
                 .read(tasksProvider.notifier)
-                .toggleTaskCompletion(task.copyWith(completed: value!), index);
+                .toggleTaskCompletion(taskToDisplay.copyWith(completed: value!), index);
           },
           activeColor: Colors.green,
         ),
@@ -66,7 +66,7 @@ class TodoItem extends ConsumerWidget {
           ref
               .read(tasksProvider.notifier)
               .toggleTaskCompletion(
-                task.copyWith(completed: !task.completed),
+                taskToDisplay.copyWith(completed: !taskToDisplay.completed),
                 index,
               );
         },

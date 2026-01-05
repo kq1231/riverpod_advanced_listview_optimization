@@ -60,14 +60,8 @@ class TasksScreen extends ConsumerWidget {
               return ListView.builder(
                 itemCount: tasks.length,
                 itemBuilder: (context, index) {
-                  // Create a ProviderScope for each list item
-                  // Override taskIndexProvider with the current index
-                  return ProviderScope(
-                    overrides: [taskIndexProvider.overrideWithValue(index)],
-                    // Use const keyword for the child widget
-                    // This ensures the widget is not rebuilt unnecessarily
-                    child: const TodoItem(),
-                  );
+                  // Pass index directly as parameter
+                  return TodoItem(index: index);
                 },
               );
             },

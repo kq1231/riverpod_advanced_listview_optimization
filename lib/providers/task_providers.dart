@@ -55,9 +55,3 @@ class TasksNotifier extends AsyncNotifier<List<Task>> {
     state = await AsyncValue.guard(() => fetchTasks());
   }
 }
-
-// Provider for individual task index
-// This will be overridden in ProviderScope for each list item
-final taskIndexProvider = Provider<int>((ref) {
-  throw UnimplementedError();
-});
