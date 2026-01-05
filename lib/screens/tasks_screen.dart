@@ -11,7 +11,7 @@ class TasksScreen extends ConsumerWidget {
     // Watch only the length of the list using select
     // This ensures the ListView only rebuilds when the list length changes
     final tasksLength = ref.watch(
-      tasksProvider.select((value) => value.value?.length),
+      tasksProvider.select((asyncValue) => asyncValue.value?.length),
     );
 
     debugPrint('Building TasksScreen - List length: $tasksLength');
